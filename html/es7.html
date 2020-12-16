@@ -1,0 +1,1032 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>es7</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-20"><meta name="DC.source" content="es7.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clc
+f = @(x) x.^2 * sin(x.^2);
+f_der = @(x) 2*x.*(sin(x.^2) + x.^2*cos(x.^2));
+x0=1;
+itmax = 200;
+molteplicita = 4;
+<span class="keyword">for</span> i=1:12
+    rst(i,1) = 10^(-i);
+    [it,x] = newton(f,f_der,x0,10^(-i),itmax);
+    rst(i,2) = it;
+    rst(i,3) = x
+    [it,x] = newton_mod(f,f_der,x0,molteplicita,10^(-i),itmax);
+    rst(i,4) = it;
+    rst(i,5) = x
+    [it,x] = aitken(f,f_der,x0,10^(-i),itmax)
+    rst(i,5) = it;
+    rst(i,6) = x
+<span class="keyword">end</span>
+
+colNames = {<span class="string">'Tol'</span>,<span class="string">'It_Newton'</span>,<span class="string">'x_Newton'</span>,<span class="string">'It_NewtonMod'</span>,<span class="string">'x_NewtonMod'</span>,<span class="string">'It_Aitken'</span>,<span class="string">'x_Aitken'</span>};
+tableResult = array2table(rst,<span class="keyword">...</span><span class="comment">,</span>
+    <span class="string">'VariableNames'</span>,colNames);
+disp(tableResult);
+
+
+
+<span class="keyword">function</span> [iterazioni,x] = newton(f, f_der, x0, tolx, itmax)
+<span class="comment">% Utilizzo [iterazioni,x] = newton_mod(f, f_der, x0, tolx, itmax)</span>
+<span class="comment">% Calcola dell'approssimazione di una radice della funzione</span>
+<span class="comment">% Metodo: Newton</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: funzione utilizzata</span>
+<span class="comment">%   f_der: derivata della funzione utilizzata f</span>
+<span class="comment">%   x0: punto di innesco</span>
+<span class="comment">%   molteplicit&agrave;: molteplicit&agrave; nota della radice</span>
+<span class="comment">%   tolx: tolleranza prefissata</span>
+<span class="comment">%   itmax: numero massimo di iterazioni</span>
+<span class="comment">% Restituisce:</span>
+<span class="comment">%   i: numero di iterazioni eseguite (-1 nel caso non converga)</span>
+<span class="comment">%   x: radice approssimata</span>
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    <span class="keyword">while</span> (i&lt;itmax) &amp;&amp; (abs(x-x0)&gt;tolx)
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x = x0 - fx/f_derx;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> abs(x-x0)&lt;=tolx
+        iterazioni = i;
+    <span class="keyword">else</span>
+        <span class="comment">% Non abbiamo raggiunto la convergenza entro itmax iterazioni</span>
+        iterazioni = -1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> [iterazioni,x] = newton_mod(f, f_der, x0, molteplicita, tolx, itmax)
+<span class="comment">% Utilizzo [iterazioni,x] = newton_mod(f, f_der, x0, tolx, itmax)</span>
+<span class="comment">% Calcola dell'approssimazione di una radice della funzione</span>
+<span class="comment">% Metodo: Newton Modificato</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: funzione utilizzata</span>
+<span class="comment">%   f_der: derivata della funzione utilizzata f</span>
+<span class="comment">%   x0: punto di innesco</span>
+<span class="comment">%   molteplicit&agrave;: molteplicit&agrave; nota della radice</span>
+<span class="comment">%   tolx: tolleranza prefissata</span>
+<span class="comment">%   itmax: numero massimo di iterazioni</span>
+<span class="comment">% Restituisce:</span>
+<span class="comment">%   i: numero di iterazioni eseguite (-1 nel caso non converga)</span>
+<span class="comment">%   x: radice approssimata</span>
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    <span class="keyword">while</span> (i&lt;itmax) &amp;&amp; (abs(x-x0)&gt;tolx)
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x = x0 - molteplicita*fx/f_derx;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> abs(x-x0)&gt;tolx
+        <span class="comment">% Non abbiamo raggiunto la convergenza entro itmax iterazioni</span>
+        i = -1;
+    <span class="keyword">end</span>
+    iterazioni = i;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [iterazioni,x] = aitken(f, f_der, x0, tolx, itmax)
+<span class="comment">% Utilizzo [iterazioni,x] = aitken(f, f_der, x0, tolx, itmax)</span>
+<span class="comment">% Calcola dell'approssimazione di una radice della funzione</span>
+<span class="comment">% Metodo: Aitken</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: funzione utilizzata</span>
+<span class="comment">%   f_der: derivata della funzione utilizzata f</span>
+<span class="comment">%   x0: punto di innesco</span>
+<span class="comment">%   molteplicit&agrave;: molteplicit&agrave; nota della radice</span>
+<span class="comment">%   tolx: tolleranza prefissata</span>
+<span class="comment">%   itmax: numero massimo di iterazioni</span>
+<span class="comment">% Restituisce:</span>
+<span class="comment">%   i: numero di iterazioni eseguite (-1 nel caso non converga)</span>
+<span class="comment">%   x: radice approssimata</span>
+    i = 0;
+    x = x0;
+    vai = 1;
+    <span class="keyword">while</span> (i&lt;itmax) &amp;&amp; vai
+        i = i + 1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x1 = x0 - fx/f_derx;
+        fx = feval(f, x1);
+        f_derx = feval(f_der, x1);
+        x = x1 - fx/f_derx;
+        x = (x*x0-x1^2)/(x-2*x1+x0);
+        vai = abs(x-x0)&gt;tolx;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> ~vai
+        iterazioni = i;
+    <span class="keyword">else</span>
+        <span class="comment">% Non abbiamo raggiunto la convergenza entro itmax iterazioni</span>
+        iterazioni = -1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01
+   1.1000e+01   1.0000e-02   2.8805e-02
+   1.9000e+01   1.0000e-03   2.8838e-03
+   2.7000e+01   1.0000e-04   2.8870e-04
+   3.5000e+01   1.0000e-05   2.8903e-05
+   4.3000e+01   1.0000e-06   2.8935e-06
+   5.1000e+01   1.0000e-07   2.8968e-07
+   5.9000e+01   1.0000e-08   2.9001e-08
+   6.7000e+01   1.0000e-09   2.9034e-09
+   7.5000e+01   1.0000e-10   2.9066e-10
+   8.3000e+01   1.0000e-11   2.9099e-11
+   9.1000e+01   1.0000e-12   2.9132e-12
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.2423e-09
+   1.1000e+01   1.0000e-02   2.8805e-02            0            0
+   1.9000e+01   1.0000e-03   2.8838e-03            0            0
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0
+
+
+it =
+
+     3
+
+
+x =
+
+   6.4929e-19
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.1000e+01   1.0000e-02   2.8805e-02            0            0            0
+   1.9000e+01   1.0000e-03   2.8838e-03            0            0            0
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02            0            0            0
+   1.9000e+01   1.0000e-03   2.8838e-03            0            0            0
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00            0            0
+   1.9000e+01   1.0000e-03   2.8838e-03            0            0            0
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     3
+
+
+x =
+
+   6.4929e-19
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.9000e+01   1.0000e-03   2.8838e-03            0            0            0
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03            0            0            0
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00            0            0
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     3
+
+
+x =
+
+   6.4929e-19
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   2.7000e+01   1.0000e-04   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04            0            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00            0            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   3.5000e+01   1.0000e-05   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05            0            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00            0            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   4.3000e+01   1.0000e-06   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06            0            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00            0            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   5.1000e+01   1.0000e-07   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07            0            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00            0            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   5.9000e+01   1.0000e-08   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08            0            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00            0            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   6.7000e+01   1.0000e-09   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09            0            0            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00          NaN            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   7.5000e+01   1.0000e-10   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10            0            0            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00          NaN            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00   4.0000e+00            0
+   8.3000e+01   1.0000e-11   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00   4.0000e+00            0
+   1.0000e-11   8.3000e+01   2.9099e-11            0            0            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00   4.0000e+00            0
+   1.0000e-11   8.3000e+01   2.9099e-11   4.0000e+00          NaN            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00   4.0000e+00            0
+   1.0000e-11   8.3000e+01   2.9099e-11   4.0000e+00   4.0000e+00            0
+   9.1000e+01   1.0000e-12   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00   4.0000e+00            0
+   1.0000e-11   8.3000e+01   2.9099e-11   4.0000e+00   4.0000e+00            0
+   1.0000e-12   9.1000e+01   2.9132e-12            0            0            0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00   4.0000e+00            0
+   1.0000e-11   8.3000e+01   2.9099e-11   4.0000e+00   4.0000e+00            0
+   1.0000e-12   9.1000e+01   2.9132e-12   4.0000e+00          NaN            0
+
+
+it =
+
+     4
+
+
+x =
+
+     0
+
+
+rst =
+
+   1.0000e-01   3.0000e+00   2.8789e-01   2.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-02   1.1000e+01   2.8805e-02   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-03   1.9000e+01   2.8838e-03   3.0000e+00   3.0000e+00   6.4929e-19
+   1.0000e-04   2.7000e+01   2.8870e-04   3.0000e+00   4.0000e+00            0
+   1.0000e-05   3.5000e+01   2.8903e-05   3.0000e+00   4.0000e+00            0
+   1.0000e-06   4.3000e+01   2.8935e-06   3.0000e+00   4.0000e+00            0
+   1.0000e-07   5.1000e+01   2.8968e-07   3.0000e+00   4.0000e+00            0
+   1.0000e-08   5.9000e+01   2.9001e-08   3.0000e+00   4.0000e+00            0
+   1.0000e-09   6.7000e+01   2.9034e-09   4.0000e+00   4.0000e+00            0
+   1.0000e-10   7.5000e+01   2.9066e-10   4.0000e+00   4.0000e+00            0
+   1.0000e-11   8.3000e+01   2.9099e-11   4.0000e+00   4.0000e+00            0
+   1.0000e-12   9.1000e+01   2.9132e-12   4.0000e+00   4.0000e+00            0
+
+</pre><pre class="codeoutput error">Error using table.init (line 390)
+The VariableNames property must contain one name for each variable in the table.
+
+Error in array2table (line 64)
+    t = table.init(vars,nrows,rownames,nvars,varnames);
+
+Error in es7 (line 21)
+tableResult = array2table(rst,...,
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clc
+f = @(x) x.^2 * sin(x.^2);
+f_der = @(x) 2*x.*(sin(x.^2) + x.^2*cos(x.^2));
+x0=1;
+itmax = 200;
+molteplicita = 4;
+for i=1:12   
+    rst(i,1) = 10^(-i);
+    [it,x] = newton(f,f_der,x0,10^(-i),itmax);
+    rst(i,2) = it;
+    rst(i,3) = x
+    [it,x] = newton_mod(f,f_der,x0,molteplicita,10^(-i),itmax);
+    rst(i,4) = it;
+    rst(i,5) = x
+    [it,x] = aitken(f,f_der,x0,10^(-i),itmax)
+    rst(i,5) = it;
+    rst(i,6) = x
+end
+
+colNames = {'Tol','It_Newton','x_Newton','It_NewtonMod','x_NewtonMod','It_Aitken','x_Aitken'};
+tableResult = array2table(rst,...,
+    'VariableNames',colNames);
+disp(tableResult);
+
+
+
+function [iterazioni,x] = newton(f, f_der, x0, tolx, itmax)
+% Utilizzo [iterazioni,x] = newton_mod(f, f_der, x0, tolx, itmax)
+% Calcola dell'approssimazione di una radice della funzione
+% Metodo: Newton
+% Parametri:
+%   f: funzione utilizzata
+%   f_der: derivata della funzione utilizzata f
+%   x0: punto di innesco
+%   molteplicità: molteplicità nota della radice
+%   tolx: tolleranza prefissata
+%   itmax: numero massimo di iterazioni
+% Restituisce:
+%   i: numero di iterazioni eseguite (-1 nel caso non converga)
+%   x: radice approssimata    
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    while (i<itmax) && (abs(x-x0)>tolx)
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x = x0 - fx/f_derx;
+    end
+    if abs(x-x0)<=tolx
+        iterazioni = i;
+    else
+        % Non abbiamo raggiunto la convergenza entro itmax iterazioni
+        iterazioni = -1;
+    end
+end
+
+
+function [iterazioni,x] = newton_mod(f, f_der, x0, molteplicita, tolx, itmax)
+% Utilizzo [iterazioni,x] = newton_mod(f, f_der, x0, tolx, itmax)
+% Calcola dell'approssimazione di una radice della funzione
+% Metodo: Newton Modificato
+% Parametri:
+%   f: funzione utilizzata
+%   f_der: derivata della funzione utilizzata f
+%   x0: punto di innesco
+%   molteplicità: molteplicità nota della radice
+%   tolx: tolleranza prefissata
+%   itmax: numero massimo di iterazioni
+% Restituisce:
+%   i: numero di iterazioni eseguite (-1 nel caso non converga)
+%   x: radice approssimata    
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    while (i<itmax) && (abs(x-x0)>tolx)
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x = x0 - molteplicita*fx/f_derx;
+    end
+    if abs(x-x0)>tolx
+        % Non abbiamo raggiunto la convergenza entro itmax iterazioni
+        i = -1;
+    end
+    iterazioni = i;
+end
+
+function [iterazioni,x] = aitken(f, f_der, x0, tolx, itmax)
+% Utilizzo [iterazioni,x] = aitken(f, f_der, x0, tolx, itmax)
+% Calcola dell'approssimazione di una radice della funzione
+% Metodo: Aitken
+% Parametri:
+%   f: funzione utilizzata
+%   f_der: derivata della funzione utilizzata f
+%   x0: punto di innesco
+%   molteplicità: molteplicità nota della radice
+%   tolx: tolleranza prefissata
+%   itmax: numero massimo di iterazioni
+% Restituisce:
+%   i: numero di iterazioni eseguite (-1 nel caso non converga)
+%   x: radice approssimata 
+    i = 0;
+    x = x0;
+    vai = 1;
+    while (i<itmax) && vai
+        i = i + 1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x1 = x0 - fx/f_derx;
+        fx = feval(f, x1);
+        f_derx = feval(f_der, x1);
+        x = x1 - fx/f_derx;
+        x = (x*x0-x1^2)/(x-2*x1+x0);
+        vai = abs(x-x0)>tolx;
+    end
+    if ~vai
+        iterazioni = i;
+    else
+        % Non abbiamo raggiunto la convergenza entro itmax iterazioni
+        iterazioni = -1;
+    end
+end
+##### SOURCE END #####
+--></body></html>

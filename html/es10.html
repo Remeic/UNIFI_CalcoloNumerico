@@ -1,0 +1,399 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>es10</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-01"><meta name="DC.source" content="es10.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">format <span class="string">short</span> <span class="string">e</span>
+<span class="comment">%sbragano il 13 e il 15</span>
+<span class="comment">% condizionamento k della matrice guardare foto</span>
+
+n = 10;
+x = zeros(n,5);
+<span class="keyword">for</span> i = 1:5
+
+
+    [A,b] = cremat(n,i+10);
+    [LU,p] = palu(A);
+    x(:,i) = lusolve(LU,p,b);
+<span class="keyword">end</span>
+
+colNames = {<span class="string">'i_1'</span>,<span class="string">'i_2'</span>,<span class="string">'i_3'</span>,<span class="string">'i_4'</span>,<span class="string">'i_5'</span>};
+tableResult = array2table(x,<span class="keyword">...</span><span class="comment">,</span>
+    <span class="string">'VariableNames'</span>,colNames);
+disp(tableResult);
+
+
+<span class="keyword">function</span> [A,b] = cremat(n,k,simme)
+<span class="comment">%</span>
+<span class="comment">%  [A,b] = cremat(n,k,simme)  Crea una matrice A nxn ed un termine noto b,</span>
+<span class="comment">%                             in modo che la soluzione del sistema lineare</span>
+<span class="comment">%                             A*x=b sia x = [1,2,...,n]^T.</span>
+<span class="comment">%                             k non ve lo dico a cosa serve.</span>
+<span class="comment">%                             simme, se specificato, crea una matrice</span>
+<span class="comment">%                             simmetrica e definita positiva.</span>
+<span class="comment">%</span>
+<span class="keyword">if</span> nargin==1
+    sigma = 1/n;
+<span class="keyword">else</span>
+    sigma = 10^(-k);
+<span class="keyword">end</span>
+rng(0);
+[q1,r1] = qr(rand(n));
+<span class="keyword">if</span> nargin==3
+    q2 = q1';
+<span class="keyword">else</span>
+    [q2,r1] = qr(rand(n));
+<span class="keyword">end</span>
+A = q1*diag([sigma 2/n:1/n:1])*q2;
+x = [1:n]';
+b = A*x;
+<span class="keyword">return</span>
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> [LU, p] = palu(A)
+<span class="comment">% Utilizzo: [LU, p] = palu(A)</span>
+<span class="comment">% Calcola la fattorizzazione LU della matrice A con</span>
+<span class="comment">% pivoting parziale di A</span>
+
+<span class="comment">% Parametri:</span>
+<span class="comment">% - A: la matrice da fattorizzare.</span>
+<span class="comment">% Restituisce:</span>
+<span class="comment">% - LU: la matrice fattorizzata LU;</span>
+<span class="comment">% - p: vettore di permutazione</span>
+
+    n=size(A,1);
+    p=(1:n);
+    <span class="keyword">for</span> i=1:n-1
+        [mi, ki] = max(abs(A(i:n, i)));
+        <span class="keyword">if</span> mi==0 <span class="comment">% Controllo il caso in cui la matrice sia singolare</span>
+            error(<span class="string">'Matrice singolare'</span>);
+        <span class="keyword">end</span>
+        ki = ki+i-1;
+        <span class="keyword">if</span> ki&gt;i
+            A([i ki], :) = A([ki i], :);
+            p([i ki]) = p([ki i]);
+        <span class="keyword">end</span>
+        A(i+1:n, i) = A(i+1:n, i)/A(i, i);
+        A(i+1:n, i+1:n) = A(i+1:n, i+1:n) -A(i+1:n, i)*A(i, i+1:n);
+    <span class="keyword">end</span>
+    LU = A;
+<span class="keyword">end</span>
+
+
+
+
+<span class="keyword">function</span> b = lusolve(LU,p,b)
+    <span class="comment">% x = lusolve(A,b,p)</span>
+    <span class="comment">% Calcola la soluzione di Ax=b con A matrice LU con la tecnica del pivoting</span>
+    <span class="comment">% Parametri:</span>
+    <span class="comment">% - A: Matrice matrice LU con pivoting (generata dalla funzione palu)</span>
+    <span class="comment">% - b: vettore colonna</span>
+    <span class="comment">% Restituisce:</span>
+    <span class="comment">%   b: soluzione del sistema</span>
+    P = zeros(length(LU));
+    <span class="keyword">for</span> i = 1:length(LU)
+        P(i, p(i)) = 1;
+    <span class="keyword">end</span>
+    b = triangInfUnit(tril(LU,-1)+eye(length(LU)), P*b);
+    b = triangSup(triu(LU), b);
+
+<span class="keyword">end</span>
+
+
+<span class="comment">% Controlli che vengono effettuati in questa funzione</span>
+<span class="comment">% - A deve essere una matrice quadrata</span>
+<span class="comment">% - A deve essere triangolare inferiore</span>
+<span class="comment">% - A deve essere a diagonale unitaria</span>
+
+<span class="keyword">function</span> b = triangInfUnit(A, b)
+    <span class="comment">% Utilizzo: b = tri_inf_unit(A, b)</span>
+    <span class="comment">% Calcola la soluzione del sistema Ax=b con A matrice triangolare inferiore a</span>
+    <span class="comment">% diagonale unitaria.</span>
+    <span class="comment">% Parametri:</span>
+    <span class="comment">%   A: Matrice triangolare inferiore</span>
+    <span class="comment">%   b: vettore dei termini noti</span>
+    <span class="comment">% Restituisce:</span>
+    <span class="comment">%  b: soluzione del sistema</span>
+
+    [n,m] = size(A);
+    <span class="keyword">if</span> n~=m
+        error(<span class="string">'Matrice non quadrata.'</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> ~istril(A)
+        error(<span class="string">'Matrice non triangolare inferiore'</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> ~all(diag(A)==1)
+        error(<span class="string">'Matrice non a diagonale unitaria'</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=1:n
+        <span class="keyword">for</span> j=1:i-1
+            b(i) = b(i) - A(i,j)*b(j);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> A(i,i)==0  <span class="comment">% Controllo se la matrice &egrave; singolare</span>
+            error(<span class="string">'Matrice singolare'</span>)
+        <span class="keyword">else</span>
+            b(i) = b(i)/A(i,i);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [b] = triangSup(A, b)
+    <span class="comment">% Utilizzo: [b] = diagonale(A, b)</span>
+    <span class="comment">% Calcola la soluzione di Ax=b con A matrice triangolare superiore</span>
+    <span class="comment">% Parametri:</span>
+    <span class="comment">%   A: Matrice triangolare superiore</span>
+    <span class="comment">%   b: vettore colonna</span>
+    <span class="comment">% Restituisce:</span>
+    <span class="comment">%  b: soluzione del sistema</span>
+    <span class="keyword">for</span> i=length(A):-1:1
+        <span class="keyword">for</span> j=i+1:length(A)
+            b(i)=b(i)-A(i,j)*b(j);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> A(i,i)==0 <span class="comment">% Controllo se la matrice &egrave; singolare</span>
+            error(<span class="string">'Matrice singolare'</span>)
+        <span class="keyword">else</span>
+            b(i)=b(i)/A(i,i);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">       i_1           i_2           i_3           i_4           i_5    
+    __________    __________    __________    __________    __________
+
+    1.0000e+00    9.9999e-01    9.9928e-01    1.0000e+00    9.8668e-01
+    2.0000e+00    2.0000e+00    2.0021e+00    2.0000e+00    2.0388e+00
+    3.0000e+00    3.0000e+00    2.9993e+00    3.0000e+00    2.9876e+00
+    4.0000e+00    4.0000e+00    4.0022e+00    4.0000e+00    4.0411e+00
+    5.0001e+00    4.9999e+00    4.9944e+00    5.0000e+00    4.8964e+00
+    5.9999e+00    6.0000e+00    6.0028e+00    6.0000e+00    6.0513e+00
+    7.0000e+00    7.0000e+00    7.0021e+00    7.0000e+00    7.0394e+00
+    8.0000e+00    8.0000e+00    8.0002e+00    8.0000e+00    8.0037e+00
+    9.0000e+00    9.0000e+00    9.0019e+00    9.0000e+00    9.0357e+00
+    1.0000e+01    1.0000e+01    1.0001e+01    1.0000e+01    1.0014e+01
+
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+
+format short e
+%sbragano il 13 e il 15 
+% condizionamento k della matrice guardare foto
+
+n = 10;
+x = zeros(n,5);
+for i = 1:5
+   
+    
+    [A,b] = cremat(n,i+10);
+    [LU,p] = palu(A);
+    x(:,i) = lusolve(LU,p,b);
+end
+
+colNames = {'i_1','i_2','i_3','i_4','i_5'};
+tableResult = array2table(x,...,
+    'VariableNames',colNames);
+disp(tableResult);
+
+
+function [A,b] = cremat(n,k,simme)
+%
+%  [A,b] = cremat(n,k,simme)  Crea una matrice A nxn ed un termine noto b,
+%                             in modo che la soluzione del sistema lineare 
+%                             A*x=b sia x = [1,2,...,n]^T.
+%                             k non ve lo dico a cosa serve.
+%                             simme, se specificato, crea una matrice
+%                             simmetrica e definita positiva.
+%
+if nargin==1
+    sigma = 1/n; 
+else    
+    sigma = 10^(-k);
+end    
+rng(0);
+[q1,r1] = qr(rand(n));
+if nargin==3
+    q2 = q1';
+else    
+    [q2,r1] = qr(rand(n));
+end    
+A = q1*diag([sigma 2/n:1/n:1])*q2;
+x = [1:n]';
+b = A*x;
+return
+end
+
+
+
+function [LU, p] = palu(A)
+% Utilizzo: [LU, p] = palu(A)
+% Calcola la fattorizzazione LU della matrice A con
+% pivoting parziale di A
+
+% Parametri:
+% - A: la matrice da fattorizzare.
+% Restituisce:
+% - LU: la matrice fattorizzata LU;
+% - p: vettore di permutazione
+
+    n=size(A,1);
+    p=(1:n);
+    for i=1:n-1
+        [mi, ki] = max(abs(A(i:n, i)));
+        if mi==0 % Controllo il caso in cui la matrice sia singolare
+            error('Matrice singolare');
+        end
+        ki = ki+i-1;
+        if ki>i
+            A([i ki], :) = A([ki i], :);
+            p([i ki]) = p([ki i]);
+        end
+        A(i+1:n, i) = A(i+1:n, i)/A(i, i);
+        A(i+1:n, i+1:n) = A(i+1:n, i+1:n) -A(i+1:n, i)*A(i, i+1:n);
+    end
+    LU = A;
+end
+
+
+
+
+function b = lusolve(LU,p,b)
+    % x = lusolve(A,b,p)
+    % Calcola la soluzione di Ax=b con A matrice LU con la tecnica del pivoting
+    % Parametri:
+    % - A: Matrice matrice LU con pivoting (generata dalla funzione palu)
+    % - b: vettore colonna
+    % Restituisce:
+    %   b: soluzione del sistema
+    P = zeros(length(LU));
+    for i = 1:length(LU)
+        P(i, p(i)) = 1;
+    end
+    b = triangInfUnit(tril(LU,-1)+eye(length(LU)), P*b);
+    b = triangSup(triu(LU), b);
+   
+end
+
+
+% Controlli che vengono effettuati in questa funzione
+% - A deve essere una matrice quadrata
+% - A deve essere triangolare inferiore
+% - A deve essere a diagonale unitaria
+
+function b = triangInfUnit(A, b)
+    % Utilizzo: b = tri_inf_unit(A, b)
+    % Calcola la soluzione del sistema Ax=b con A matrice triangolare inferiore a
+    % diagonale unitaria.
+    % Parametri: 
+    %   A: Matrice triangolare inferiore
+    %   b: vettore dei termini noti
+    % Restituisce:
+    %  b: soluzione del sistema
+   
+    [n,m] = size(A);
+    if n~=m
+        error('Matrice non quadrata.')
+    end
+    if ~istril(A)
+        error('Matrice non triangolare inferiore')
+    end
+    if ~all(diag(A)==1)
+        error('Matrice non a diagonale unitaria')
+    end
+    for i=1:n
+        for j=1:i-1
+            b(i) = b(i) - A(i,j)*b(j);
+        end
+        if A(i,i)==0  % Controllo se la matrice è singolare
+            error('Matrice singolare')
+        else
+            b(i) = b(i)/A(i,i);
+        end
+    end
+end
+
+function [b] = triangSup(A, b)
+    % Utilizzo: [b] = diagonale(A, b)
+    % Calcola la soluzione di Ax=b con A matrice triangolare superiore
+    % Parametri: 
+    %   A: Matrice triangolare superiore
+    %   b: vettore colonna
+    % Restituisce:
+    %  b: soluzione del sistema
+    for i=length(A):-1:1
+        for j=i+1:length(A)
+            b(i)=b(i)-A(i,j)*b(j);
+        end
+        if A(i,i)==0 % Controllo se la matrice è singolare
+            error('Matrice singolare')
+        else
+            b(i)=b(i)/A(i,i);
+        end
+    end
+end
+
+
+##### SOURCE END #####
+--></body></html>

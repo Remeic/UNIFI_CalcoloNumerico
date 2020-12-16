@@ -1,0 +1,398 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>bisezione</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-06-30"><meta name="DC.source" content="bisezione.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">f = @(x) x-(exp(-x))*cos(x/100);
+<span class="comment">% Derivata prima</span>
+derivate_f = @(x) (1/100)*exp(-x)*sin(x/100)+exp(-x)*cos(1/100)+1;
+
+x0 = -1;
+itmax = 30000;
+rst = [0 0 0 0 0 ];
+<span class="comment">% Richiamo newton, corde e secanti per valori decrescenti di tolx</span>
+<span class="keyword">for</span> i = 1:12
+    tol = 10^-i;
+    rst(i, 1) = tol;
+    a = -1;
+    b = 1;
+    iterazioni = metodoBisezione(f,a,b,tol);
+    rst(i,2) = iterazioni;
+    iterazioni = metodoNewton(f, derivate_f, x0, tol, itmax);
+    rst(i, 3) = iterazioni;
+    [iterazioni,x] = metodoCorde(f, derivate_f, x0, tol, itmax);
+    rst(i, 4) = iterazioni;
+    iterazioni = metodoSecanti(f, derivate_f, x0, tol, itmax);
+    rst(i, 5) = iterazioni;
+<span class="keyword">end</span>
+
+colNames = {<span class="string">'tolx'</span>,<span class="string">'Bisezione'</span>,<span class="string">'Newton'</span>,<span class="string">'Corde'</span>,<span class="string">'Secanti'</span>};
+tableResult = array2table(rst,<span class="keyword">...</span><span class="comment">,</span>
+    <span class="string">'VariableNames'</span>,colNames);
+disp(tableResult);
+
+<span class="keyword">function</span> [iterazioni,x] = metodoBisezione(f, a, b, tolx)
+<span class="comment">% Utilizzo: [iterazioni,x] = metodoBisezione(f, a, b, tolx, itmax)</span>
+<span class="comment">% Calcola dell'approssimazione di una radice della funzione</span>
+<span class="comment">% METODO: Newton</span>
+<span class="comment">%</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: Funzione utilizzata</span>
+<span class="comment">%   a: Estremo sinistro dell'intervallo di condifenza iniziale</span>
+<span class="comment">%   b: Estremo destro dell'intervallo di condifenza iniziale</span>
+<span class="comment">%   tolx: Tolleranza prefissata</span>
+<span class="comment">% Restituisce:</span>
+<span class="comment">%   iterazioni: numero di iterazioni eseguite</span>
+<span class="comment">%   x: Radice approssimata</span>
+    x = inf;
+    fa = feval(f,a);
+    fb = feval(f,b);
+    <span class="keyword">if</span> fa*fb &gt; 0
+        error(<span class="string">"L' intervallo non contiene alcuna radice"</span>);
+    <span class="keyword">end</span>
+    imax = ceil(log2(b-a)-log2(tolx));
+    <span class="keyword">for</span> i = 2:imax
+        <span class="comment">% approssimazione della derivata prima per P'(x*)</span>
+        xi = (a+b)/2;
+        fx = feval(f,x);
+        <span class="keyword">if</span> abs(xi-x) &lt;= tolx*(1+abs(xi))
+            <span class="keyword">break</span>;
+        <span class="keyword">elseif</span> fa*fx &lt; 0
+            b = xi;
+            fb = fx;
+        <span class="keyword">else</span>
+            a = xi;
+            fa = fx;
+        <span class="keyword">end</span>
+        x = xi;
+    <span class="keyword">end</span>
+    iterazioni = i;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [iterazioni,x] = metodoNewton(f, f_der, x0, tolx, itmax)
+<span class="comment">% Utilizzo: [iterazioni,x] = metodoNewton(f, f_der, x0, tolx, itmax)</span>
+<span class="comment">% Calcola dell'approssimazione di una radice della funzione</span>
+<span class="comment">% METODO: Newton</span>
+<span class="comment">%</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: Funzione utilizzata</span>
+<span class="comment">%   f_der: Derivata della funzione designata</span>
+<span class="comment">%   x0: Punto di innesco</span>
+<span class="comment">%   tolx: Tolleranza prefissata</span>
+<span class="comment">%   itmax: Numero di iterazioni massime</span>
+<span class="comment">% Restituisce:</span>
+<span class="comment">%   iterazioni: numero di iterazioni eseguite ( -1 nel caso di una non</span>
+<span class="comment">%   convergenza)</span>
+<span class="comment">%   x: Radice approssimata</span>
+
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    <span class="keyword">while</span> (i&lt;itmax) &amp;&amp; (abs(x-x0)&gt;tolx)
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x = x0 - fx/f_derx;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> abs(x-x0) &lt;= tolx * (1 + x0) <span class="comment">% Convergenza ottenuta</span>
+        iterazioni = i;
+    <span class="keyword">else</span>  <span class="comment">% Convergenza non ottenuta</span>
+        warning(<span class="string">"Il metodo (Newton) non converge"</span>);
+        iterazioni = -1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [iterazioni,x] = metodoCorde(f, f_der, x0, tolx, itmax)
+<span class="comment">% Utilizzo: [iterazioni,x] = metodoCorde(f, f_der, x0, tolx, itmax)</span>
+<span class="comment">% Calcola dell'approssimazione di una radice della funzione</span>
+<span class="comment">% METODO: Corde</span>
+<span class="comment">%</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: Funzione utilizzata</span>
+<span class="comment">%   f_der: Derivata della funzione designata</span>
+<span class="comment">%   x0: Punto di innesco</span>
+<span class="comment">%   tolx: Tolleranza prefissata</span>
+<span class="comment">%   itmax: Numero di iterazioni massime</span>
+<span class="comment">% Restituisce:</span>
+<span class="comment">%   iterazioni: numero di iterazioni eseguite ( -1 nel caso di una non</span>
+<span class="comment">%   convergenza)</span>
+<span class="comment">%   x: Radice approssimata</span>
+
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    <span class="keyword">while</span> (i&lt;itmax) &amp;&amp; (abs(x-x0)&gt;tolx*(1+x0))
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        x = x0 - fx/f_derx;
+    <span class="keyword">end</span>
+    iterazioni = i;
+    <span class="keyword">if</span> abs(x-x0)&gt; tolx*(1+x0) <span class="comment">% Convergenza non ottenuta</span>
+        warning(<span class="string">"Il metodo (Corde) non converge"</span>);
+        iterazioni = -1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> iterazioni = metodoSecanti(f, f_der, x0, tolx, itmax)
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    <span class="keyword">while</span> (i&lt;itmax) &amp;&amp; (abs(x-x0)&gt;tolx*(1+x0))
+        i = i+1;
+        fx0 = fx;
+        fx = feval(f, x);
+        x1 = (fx*x0-fx0*x)/(fx-fx0);
+        x0 = x;
+        x = x1;
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> abs(x-x0) &lt;= tolx*(1+x0)  <span class="comment">% Convergenza ottenuta</span>
+        iterazioni = i;
+    <span class="keyword">else</span> <span class="comment">% Convergenza non ottenuta</span>
+        warning(<span class="string">"Il metodo (Secanti) non converge"</span>);
+        iterazioni = -1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">            tolx                 Bisezione                 Newton                  Corde                  Secanti       
+    ____________________    ____________________    ____________________    ____________________    ____________________
+
+    1.00000000000000e-01    5.00000000000000e+00    2.00000000000000e+00    3.00000000000000e+00    3.00000000000000e+00
+    1.00000000000000e-02    8.00000000000000e+00    3.00000000000000e+00    6.00000000000000e+00    4.00000000000000e+00
+    1.00000000000000e-03    1.10000000000000e+01    3.00000000000000e+00    1.00000000000000e+01    4.00000000000000e+00
+    1.00000000000000e-04    1.50000000000000e+01    4.00000000000000e+00    1.50000000000000e+01    5.00000000000000e+00
+    1.00000000000000e-05    1.80000000000000e+01    4.00000000000000e+00    1.90000000000000e+01    5.00000000000000e+00
+    1.00000000000000e-06    2.10000000000000e+01    4.00000000000000e+00    2.30000000000000e+01    6.00000000000000e+00
+    1.00000000000000e-07    2.50000000000000e+01    5.00000000000000e+00    2.70000000000000e+01    6.00000000000000e+00
+    1.00000000000000e-08    2.80000000000000e+01    5.00000000000000e+00    3.10000000000000e+01    6.00000000000000e+00
+    1.00000000000000e-09    3.10000000000000e+01    5.00000000000000e+00    3.60000000000000e+01    6.00000000000000e+00
+    1.00000000000000e-10    3.50000000000000e+01    5.00000000000000e+00    4.00000000000000e+01    7.00000000000000e+00
+    1.00000000000000e-11    3.80000000000000e+01    5.00000000000000e+00    4.40000000000000e+01    7.00000000000000e+00
+    1.00000000000000e-12    4.10000000000000e+01    6.00000000000000e+00    4.80000000000000e+01    7.00000000000000e+00
+
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+f = @(x) x-(exp(-x))*cos(x/100);
+% Derivata prima
+derivate_f = @(x) (1/100)*exp(-x)*sin(x/100)+exp(-x)*cos(1/100)+1;
+
+x0 = -1;
+itmax = 30000;
+rst = [0 0 0 0 0 ];
+% Richiamo newton, corde e secanti per valori decrescenti di tolx
+for i = 1:12
+    tol = 10^-i;
+    rst(i, 1) = tol;
+    a = -1;
+    b = 1;
+    iterazioni = metodoBisezione(f,a,b,tol);
+    rst(i,2) = iterazioni;
+    iterazioni = metodoNewton(f, derivate_f, x0, tol, itmax);
+    rst(i, 3) = iterazioni;
+    [iterazioni,x] = metodoCorde(f, derivate_f, x0, tol, itmax);
+    rst(i, 4) = iterazioni;
+    iterazioni = metodoSecanti(f, derivate_f, x0, tol, itmax);
+    rst(i, 5) = iterazioni;
+end
+
+colNames = {'tolx','Bisezione','Newton','Corde','Secanti'};
+tableResult = array2table(rst,...,
+    'VariableNames',colNames);
+disp(tableResult);
+
+function [iterazioni,x] = metodoBisezione(f, a, b, tolx)
+% Utilizzo: [iterazioni,x] = metodoBisezione(f, a, b, tolx, itmax)
+% Calcola dell'approssimazione di una radice della funzione
+% METODO: Newton
+%
+% Parametri:
+%   f: Funzione utilizzata
+%   a: Estremo sinistro dell'intervallo di condifenza iniziale
+%   b: Estremo destro dell'intervallo di condifenza iniziale
+%   tolx: Tolleranza prefissata
+% Restituisce:
+%   iterazioni: numero di iterazioni eseguite 
+%   x: Radice approssimata
+    x = inf;
+    fa = feval(f,a);
+    fb = feval(f,b);
+    if fa*fb > 0
+        error("L' intervallo non contiene alcuna radice");
+    end
+    imax = ceil(log2(b-a)-log2(tolx));
+    for i = 2:imax
+        % approssimazione della derivata prima per P'(x*)
+        xi = (a+b)/2;
+        fx = feval(f,x);
+        if abs(xi-x) <= tolx*(1+abs(xi))
+            break;
+        elseif fa*fx < 0
+            b = xi;
+            fb = fx;
+        else
+            a = xi;
+            fa = fx;
+        end
+        x = xi;
+    end
+    iterazioni = i;
+end
+
+function [iterazioni,x] = metodoNewton(f, f_der, x0, tolx, itmax)
+% Utilizzo: [iterazioni,x] = metodoNewton(f, f_der, x0, tolx, itmax)
+% Calcola dell'approssimazione di una radice della funzione
+% METODO: Newton
+%
+% Parametri:
+%   f: Funzione utilizzata
+%   f_der: Derivata della funzione designata
+%   x0: Punto di innesco
+%   tolx: Tolleranza prefissata
+%   itmax: Numero di iterazioni massime 
+% Restituisce:
+%   iterazioni: numero di iterazioni eseguite ( -1 nel caso di una non
+%   convergenza)
+%   x: Radice approssimata
+
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    while (i<itmax) && (abs(x-x0)>tolx)
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        f_derx = feval(f_der, x0);
+        x = x0 - fx/f_derx;
+    end
+    if abs(x-x0) <= tolx * (1 + x0) % Convergenza ottenuta
+        iterazioni = i;
+    else  % Convergenza non ottenuta
+        warning("Il metodo (Newton) non converge");
+        iterazioni = -1;
+    end
+end
+
+function [iterazioni,x] = metodoCorde(f, f_der, x0, tolx, itmax)
+% Utilizzo: [iterazioni,x] = metodoCorde(f, f_der, x0, tolx, itmax)
+% Calcola dell'approssimazione di una radice della funzione
+% METODO: Corde
+%
+% Parametri:
+%   f: Funzione utilizzata
+%   f_der: Derivata della funzione designata
+%   x0: Punto di innesco
+%   tolx: Tolleranza prefissata
+%   itmax: Numero di iterazioni massime 
+% Restituisce:
+%   iterazioni: numero di iterazioni eseguite ( -1 nel caso di una non
+%   convergenza)
+%   x: Radice approssimata
+
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    while (i<itmax) && (abs(x-x0)>tolx*(1+x0))
+        i = i+1;
+        x0 = x;
+        fx = feval(f, x0);
+        x = x0 - fx/f_derx;
+    end
+    iterazioni = i;
+    if abs(x-x0)> tolx*(1+x0) % Convergenza non ottenuta
+        warning("Il metodo (Corde) non converge");
+        iterazioni = -1;
+    end
+end
+
+function iterazioni = metodoSecanti(f, f_der, x0, tolx, itmax)
+    fx = feval(f, x0);
+    f_derx = feval(f_der, x0);
+    x = x0 - fx/f_derx;
+    i = 0;
+    while (i<itmax) && (abs(x-x0)>tolx*(1+x0))
+        i = i+1;
+        fx0 = fx;
+        fx = feval(f, x);
+        x1 = (fx*x0-fx0*x)/(fx-fx0);
+        x0 = x;
+        x = x1;
+    end
+    
+    if abs(x-x0) <= tolx*(1+x0)  % Convergenza ottenuta
+        iterazioni = i;
+    else % Convergenza non ottenuta
+        warning("Il metodo (Secanti) non converge");
+        iterazioni = -1;
+    end
+end
+##### SOURCE END #####
+--></body></html>

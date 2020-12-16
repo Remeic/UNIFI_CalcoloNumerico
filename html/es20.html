@@ -1,0 +1,500 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>es20</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-23"><meta name="DC.source" content="es20.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Esercizio: 20</span>
+<span class="comment">% Con riferimento al precedente esercizio, tabulare il massimo errore</span>
+<span class="comment">% di approssimazione (calcolato come sopra indicato), sia utilizzando le ascisse equidistanti che</span>
+<span class="comment">% quelle di Chebyshev su menzionate, relativo alla spline cubica naturale</span>
+<span class="comment">% interpolante f(x) su tali ascisse.</span>
+
+clear
+clc
+
+f = @(x) 1 ./ (1 + x .^ 2);
+a = - 5;
+b = 5;
+lebesgueConstanti=zeros(20, 1);
+z = linspace(a, b, 10001);
+lebesgueEquidistanti(f,z,a,b)
+<span class="comment">%lebesgueCheby(f,z,a,b);</span>
+
+
+<span class="keyword">function</span> lebEqui = lebesgueEquidistanti(f,z,a,b)
+<span class="comment">% Utilizzo: lebesgueEquidistanti(f,z,a,b)</span>
+<span class="comment">% Funzione che calcola la costante di lebesgue per polinomi</span>
+<span class="comment">% interpolanti di grado n:2...40 su ascisse equidistanti</span>
+<span class="comment">%</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: Funzione da approssimare</span>
+<span class="comment">%   z: punti di valutazione</span>
+<span class="comment">%   lebesgueConstanti: vettore per memorizzare le costanti calcolate</span>
+<span class="comment">%</span>
+     i = 1;
+    <span class="keyword">for</span> n = 2:2:40
+        ascisse = linspace(a, b, n + 1);
+        fi = feval(f, ascisse);
+        y = feval(f, z);
+        equiY = splineCubicaNaturale(ascisse, fi, z);
+        error(i,1) = max(abs(equiY - y));
+        i = i+1;
+        rst(i,1) = n;
+        rst(i,2)= max(abs(equiY - y));
+    <span class="keyword">end</span>
+    x = 2:2:40;
+    plot(x, error);
+    colNames = {<span class="string">'n'</span>,<span class="string">'errore'</span>};
+tableResult = array2table(rst,<span class="keyword">...</span><span class="comment">,</span>
+    <span class="string">'VariableNames'</span>,colNames);
+disp(tableResult);
+
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> lebCheb = lebesgueCheby(f,z,a,b)
+<span class="comment">% Utilizzo: lebesgueEquidistanti(f,z,a,b)</span>
+<span class="comment">% Funzione che calcola la costante di lebesgue per polinomi</span>
+<span class="comment">% interpolanti di grado n:2...40 su ascisse equidistanti</span>
+<span class="comment">%</span>
+<span class="comment">% Parametri:</span>
+<span class="comment">%   f: Funzione da approssimare</span>
+<span class="comment">%   z:</span>
+<span class="comment">%   lebesgueConstanti: vettore per memorizzare le costanti calcolate</span>
+<span class="comment">%</span>
+    i = 1;
+    <span class="keyword">for</span> n = 2:2:40
+        ascisse = chebyshev(n, a, b);
+        fi = feval(f, ascisse);
+        y = feval(f, z);
+        chebyY = splineCubicaNaturale(ascisse, fi, z);
+        error(i,1) = max(abs(chebyY - y));
+        i = i+1;
+        rst(i,1) = n;
+        rst(i,2)= max(abs(chebyY - y));
+    <span class="keyword">end</span>
+    x = 2:2:40;
+    plot(x, error);
+    colNames = {<span class="string">'n'</span>,<span class="string">'errore'</span>};
+tableResult = array2table(rst,<span class="keyword">...</span><span class="comment">,</span>
+    <span class="string">'VariableNames'</span>,colNames);
+disp(tableResult);
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> xi = chebyshev(n, a, b)
+   <span class="comment">% xi = ceby(n, a, b)</span>
+   <span class="comment">% Calcola le ascisse di Chebyshev per il polinomio di grado n</span>
+   <span class="comment">% trasformate in [a,b]</span>
+   <span class="comment">%</span>
+   <span class="comment">% Parametri:</span>
+   <span class="comment">%    n: grado del polinomio interpolante</span>
+   <span class="comment">%    a: estremo sinistro</span>
+   <span class="comment">%    b: estremo destro</span>
+   <span class="comment">%</span>
+   <span class="comment">% Restituisce:</span>
+   <span class="comment">%    xi: ascisse di Chebyshev</span>
+
+   <span class="keyword">if</span> n&lt;=0
+       error(<span class="string">'Il numero n inserito deve essere maggiore di 0.'</span>)
+   <span class="keyword">end</span>
+   xi = cos((2*[0:n]+1)*pi/(2*n+2));
+   xi = ((a+b)+(b-a)*xi)/2;
+   <span class="keyword">return</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> y = splineCubicaNaturale(xi, fi, x)
+    <span class="comment">% Utilizzo: splineNaturale = naturalSpline(xi, fi, x)</span>
+    <span class="comment">% Funzione che calcola e valuta i valori della spline cubica naturale</span>
+    <span class="comment">% relativa alle coppie di dati assegnati.</span>
+    <span class="comment">%</span>
+    <span class="comment">% Parametri:</span>
+    <span class="comment">%   xi: punti di interpolazione</span>
+    <span class="comment">%   fi: valori della funzione, valutati nelle ascisse xi</span>
+    <span class="comment">%   x: punti di valutazione della spline</span>
+    <span class="comment">%</span>
+    <span class="comment">% Restituisce:</span>
+    <span class="comment">%   splineNaturale: valori di interpolazione della spline cubica naturale</span>
+    <span class="comment">%</span>
+
+    n = length(xi);
+    splineNaturale = zeros(n, 1)';
+    widthI = xi(2 : n) - xi(1 : n - 1);
+    subDiag = (widthI(1 : end - 1)) ./ (widthI(1 : end - 1) + widthI(2 : end));
+    superDiag = (widthI(2 : end)) ./ (widthI(1 : end - 1) + widthI(2 : end));
+    divdiff = (fi(2 : n) - fi(1 : n - 1)) ./ widthI;
+    divdiff = 6 * ((divdiff(2 : end) - divdiff(1 : end - 1)) ./ (xi(3 : end) - xi(1 : end - 2)));
+    m = sistemaSplineNaturale(subDiag, superDiag, divdiff);
+    [primaConst, secondaConst] = costantiIntegrazione(m, xi,fi, widthI);
+    k=2;
+    <span class="keyword">for</span> j = 1 : length(x)
+        <span class="keyword">for</span> i = 2 : length(xi)
+            <span class="keyword">if</span> x(j) &lt;= xi(i)
+                k = i;
+                <span class="keyword">break</span>;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        y(j) = (((x(j) - xi(k - 1)) ^ 3) * m(k) + <span class="keyword">...</span>
+          ((xi(k) - x(j)) ^ 3) * m(k - 1)) / <span class="keyword">...</span>
+          (6 * widthI(k - 1)) + secondaConst(k - 1) * <span class="keyword">...</span>
+          (x(j) - xi(k - 1)) + primaConst(k - 1);
+    <span class="keyword">end</span>
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> m = sistemaSplineNaturale(subDiag, superDiag, divDiff)
+    <span class="comment">% m = sistemaSplineNaturale(subDiagCoeff, superDiagCoeff, divdiff)</span>
+    <span class="comment">% Funzione che ritorna i coefficienti necessari per il calcolo della spline</span>
+    <span class="comment">% cubica</span>
+    <span class="comment">%</span>
+    <span class="comment">% Parametri:</span>
+    <span class="comment">%   subDiag: coeffiencenti della sotto diagonale della matrice</span>
+    <span class="comment">%   superDiag: coeffiencenti della sopra diagonale della matri</span>
+    <span class="comment">%   diffDiv: differenze divise</span>
+    <span class="comment">%</span>
+    <span class="comment">% Restituisce:</span>
+    <span class="comment">%   m: coefficienti necessari a calcolare l'espressione della spline</span>
+    <span class="comment">%    cubica</span>
+    <span class="comment">%</span>
+    n = length(superDiag) + 1;
+    u(1) = 2;
+    l = zeros(1, n - 2);
+    m = zeros(1, n - 1);
+    <span class="keyword">for</span> i = 2 : n - 1
+        l(i) = subDiag(i) / u(i - 1);
+        u(i) = 2 - l(i) * superDiag(i - 1);
+    <span class="keyword">end</span>
+    f(1) = divDiff(1);
+    <span class="keyword">for</span> i = 2:n - 1
+        f(i) = divDiff(i) - l(i) * f(i - 1);
+    <span class="keyword">end</span>
+    m(n - 1) = f(n - 1) / u(n - 1);
+    <span class="keyword">for</span> j = n - 2 : - 1 : 1
+        m(j) = (f(j) - superDiag(j + 1) * m(j + 1)) / u(j);
+    <span class="keyword">end</span>
+    m = [0 m 0];
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [primaConst, secondaConst] = costantiIntegrazione(m, xi, fi, valI)
+    <span class="comment">% Utilizzo[ri, qi] = costantiIntegrazione(m, fi, xi, widthI)</span>
+    <span class="comment">% Funzione che ritorna le costanti di integrazione della spline.</span>
+    <span class="comment">%</span>
+    <span class="comment">% Parametri:</span>
+    <span class="comment">%   m: fattore m calcolato</span>
+    <span class="comment">%   fi: valori della funzione, valutati nelle ascisse xi</span>
+    <span class="comment">%   xi: ascisse di interpolazione</span>
+    <span class="comment">%   valI: valore dell'i-esimo intervallo</span>
+    <span class="comment">%</span>
+    <span class="comment">% Restituisce:</span>
+    <span class="comment">%   primaConst: valore della costante prima integrazione</span>
+    <span class="comment">%   secondaConst: valore della costane seconda integrazione</span>
+
+    n = length(xi);
+    primaConst = zeros(1, n-1);
+    secondaConst = primaConst;
+    <span class="keyword">for</span> i = 2 : n
+        primaConst(i - 1) = fi(i - 1) - (valI(i - 1) ^ 2) / 6 * m(i - 1);
+        secondaConst(i - 1) = (fi(i) - fi(i - 1)) / <span class="keyword">...</span>
+                    valI(i - 1) - valI(i - 1) / 6 * (m(i) - m(i - 1));
+    <span class="keyword">end</span>
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">             n                     errore       
+    ____________________    ____________________
+
+    0.00000000000000e+00    0.00000000000000e+00
+    2.00000000000000e+00    6.01194546811499e-01
+    4.00000000000000e+00    2.79313407519679e-01
+    6.00000000000000e+00    1.29300088354098e-01
+    8.00000000000000e+00    5.60738528785616e-02
+    1.00000000000000e+01    2.19738257495818e-02
+    1.20000000000000e+01    6.90880143772588e-03
+    1.40000000000000e+01    2.48286347571702e-03
+    1.60000000000000e+01    3.74540283339586e-03
+    1.80000000000000e+01    3.71799871804135e-03
+    2.00000000000000e+01    3.18285764317361e-03
+    2.20000000000000e+01    2.52965308897213e-03
+    2.40000000000000e+01    1.92579236161883e-03
+    2.60000000000000e+01    1.42704786366254e-03
+    2.80000000000000e+01    1.03905328085696e-03
+    3.00000000000000e+01    8.24362333267215e-04
+    3.20000000000000e+01    6.55498681241262e-04
+    3.40000000000000e+01    5.23708228635011e-04
+    3.60000000000000e+01    4.21003570779233e-04
+    3.80000000000000e+01    3.40837796214299e-04
+    4.00000000000000e+01    2.77976540596248e-04
+
+</pre><img vspace="5" hspace="5" src="es20_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Esercizio: 20
+% Con riferimento al precedente esercizio, tabulare il massimo errore
+% di approssimazione (calcolato come sopra indicato), sia utilizzando le ascisse equidistanti che 
+% quelle di Chebyshev su menzionate, relativo alla spline cubica naturale
+% interpolante f(x) su tali ascisse.
+
+clear
+clc
+
+f = @(x) 1 ./ (1 + x .^ 2);
+a = - 5;
+b = 5;
+lebesgueConstanti=zeros(20, 1);
+z = linspace(a, b, 10001);
+lebesgueEquidistanti(f,z,a,b)
+%lebesgueCheby(f,z,a,b);
+
+
+function lebEqui = lebesgueEquidistanti(f,z,a,b)
+% Utilizzo: lebesgueEquidistanti(f,z,a,b)
+% Funzione che calcola la costante di lebesgue per polinomi
+% interpolanti di grado n:2...40 su ascisse equidistanti
+%
+% Parametri: 
+%   f: Funzione da approssimare
+%   z: punti di valutazione
+%   lebesgueConstanti: vettore per memorizzare le costanti calcolate
+%
+     i = 1;
+    for n = 2:2:40
+        ascisse = linspace(a, b, n + 1);
+        fi = feval(f, ascisse);
+        y = feval(f, z);
+        equiY = splineCubicaNaturale(ascisse, fi, z);
+        error(i,1) = max(abs(equiY - y));
+        i = i+1;
+        rst(i,1) = n;
+        rst(i,2)= max(abs(equiY - y));
+    end
+    x = 2:2:40;
+    plot(x, error);
+    colNames = {'n','errore'};
+tableResult = array2table(rst,...,
+    'VariableNames',colNames);
+disp(tableResult);
+
+end
+
+
+function lebCheb = lebesgueCheby(f,z,a,b)
+% Utilizzo: lebesgueEquidistanti(f,z,a,b)
+% Funzione che calcola la costante di lebesgue per polinomi
+% interpolanti di grado n:2...40 su ascisse equidistanti
+%
+% Parametri: 
+%   f: Funzione da approssimare
+%   z: 
+%   lebesgueConstanti: vettore per memorizzare le costanti calcolate
+%
+    i = 1;
+    for n = 2:2:40
+        ascisse = chebyshev(n, a, b);
+        fi = feval(f, ascisse);
+        y = feval(f, z);
+        chebyY = splineCubicaNaturale(ascisse, fi, z);
+        error(i,1) = max(abs(chebyY - y));
+        i = i+1;
+        rst(i,1) = n;
+        rst(i,2)= max(abs(chebyY - y));
+    end
+    x = 2:2:40;
+    plot(x, error);
+    colNames = {'n','errore'};
+tableResult = array2table(rst,...,
+    'VariableNames',colNames);
+disp(tableResult);
+end
+
+
+function xi = chebyshev(n, a, b)
+   % xi = ceby(n, a, b)
+   % Calcola le ascisse di Chebyshev per il polinomio di grado n
+   % trasformate in [a,b]
+   %
+   % Parametri:
+   %    n: grado del polinomio interpolante
+   %    a: estremo sinistro
+   %    b: estremo destro
+   %
+   % Restituisce:
+   %    xi: ascisse di Chebyshev
+   
+   if n<=0
+       error('Il numero n inserito deve essere maggiore di 0.')
+   end
+   xi = cos((2*[0:n]+1)*pi/(2*n+2));
+   xi = ((a+b)+(b-a)*xi)/2;
+   return
+end
+
+function y = splineCubicaNaturale(xi, fi, x)
+    % Utilizzo: splineNaturale = naturalSpline(xi, fi, x)
+    % Funzione che calcola e valuta i valori della spline cubica naturale 
+    % relativa alle coppie di dati assegnati.
+    %
+    % Parametri:
+    %   xi: punti di interpolazione
+    %   fi: valori della funzione, valutati nelle ascisse xi
+    %   x: punti di valutazione della spline
+    %
+    % Restituisce:
+    %   splineNaturale: valori di interpolazione della spline cubica naturale
+    %
+    
+    n = length(xi);
+    splineNaturale = zeros(n, 1)';
+    widthI = xi(2 : n) - xi(1 : n - 1);
+    subDiag = (widthI(1 : end - 1)) ./ (widthI(1 : end - 1) + widthI(2 : end));
+    superDiag = (widthI(2 : end)) ./ (widthI(1 : end - 1) + widthI(2 : end));
+    divdiff = (fi(2 : n) - fi(1 : n - 1)) ./ widthI;
+    divdiff = 6 * ((divdiff(2 : end) - divdiff(1 : end - 1)) ./ (xi(3 : end) - xi(1 : end - 2)));
+    m = sistemaSplineNaturale(subDiag, superDiag, divdiff);
+    [primaConst, secondaConst] = costantiIntegrazione(m, xi,fi, widthI);
+    k=2;
+    for j = 1 : length(x)
+        for i = 2 : length(xi)
+            if x(j) <= xi(i)
+                k = i;
+                break;
+            end
+        end
+        y(j) = (((x(j) - xi(k - 1)) ^ 3) * m(k) + ...
+          ((xi(k) - x(j)) ^ 3) * m(k - 1)) / ...
+          (6 * widthI(k - 1)) + secondaConst(k - 1) * ...
+          (x(j) - xi(k - 1)) + primaConst(k - 1);
+    end
+    return
+end
+
+
+function m = sistemaSplineNaturale(subDiag, superDiag, divDiff)
+    % m = sistemaSplineNaturale(subDiagCoeff, superDiagCoeff, divdiff)
+    % Funzione che ritorna i coefficienti necessari per il calcolo della spline
+    % cubica
+    %
+    % Parametri:
+    %   subDiag: coeffiencenti della sotto diagonale della matrice 
+    %   superDiag: coeffiencenti della sopra diagonale della matri
+    %   diffDiv: differenze divise
+    %
+    % Restituisce:
+    %   m: coefficienti necessari a calcolare l'espressione della spline
+    %    cubica
+    %
+    n = length(superDiag) + 1;
+    u(1) = 2;
+    l = zeros(1, n - 2);
+    m = zeros(1, n - 1);
+    for i = 2 : n - 1
+        l(i) = subDiag(i) / u(i - 1);
+        u(i) = 2 - l(i) * superDiag(i - 1);
+    end
+    f(1) = divDiff(1);
+    for i = 2:n - 1
+        f(i) = divDiff(i) - l(i) * f(i - 1);
+    end
+    m(n - 1) = f(n - 1) / u(n - 1);
+    for j = n - 2 : - 1 : 1
+        m(j) = (f(j) - superDiag(j + 1) * m(j + 1)) / u(j);
+    end
+    m = [0 m 0];
+    return
+end
+
+function [primaConst, secondaConst] = costantiIntegrazione(m, xi, fi, valI)
+    % Utilizzo[ri, qi] = costantiIntegrazione(m, fi, xi, widthI)
+    % Funzione che ritorna le costanti di integrazione della spline.
+    %
+    % Parametri:
+    %   m: fattore m calcolato
+    %   fi: valori della funzione, valutati nelle ascisse xi
+    %   xi: ascisse di interpolazione
+    %   valI: valore dell'i-esimo intervallo
+    %
+    % Restituisce:
+    %   primaConst: valore della costante prima integrazione
+    %   secondaConst: valore della costane seconda integrazione
+
+    n = length(xi);
+    primaConst = zeros(1, n-1);
+    secondaConst = primaConst;
+    for i = 2 : n
+        primaConst(i - 1) = fi(i - 1) - (valI(i - 1) ^ 2) / 6 * m(i - 1);
+        secondaConst(i - 1) = (fi(i) - fi(i - 1)) / ...
+                    valI(i - 1) - valI(i - 1) / 6 * (m(i) - m(i - 1));
+    end
+    return
+end
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
